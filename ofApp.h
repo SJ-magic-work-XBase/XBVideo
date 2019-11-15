@@ -28,7 +28,8 @@ private:
 	
 	/****************************************
 	****************************************/
-    ofFbo fbo[NUM_TYPES];	
+	ofFbo fbo_mixed;
+    ofFbo fbo[NUM_TYPES];
 	ofVideoPlayer mov[NUM_TYPES];
 	
 	ofShader shader_Add;
@@ -45,6 +46,7 @@ private:
 	void SetUp_Start_Mov(ofVideoPlayer* video);
 	void update_fbo(ofFbo& _fbo, ofVideoPlayer& _mov);
 	void ReceiveOsc_from_XBE();
+	void draw_mixed();
 	
 public:
 	/****************************************

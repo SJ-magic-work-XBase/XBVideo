@@ -57,11 +57,16 @@ void ofApp::setup(){
 	********************/
 	setup_Gui();
 	
+	/* */
+	fbo_mixed.allocate(WINDOW_WIDTH, WINDOW_HEIGHT, GL_RGBA);
+	clear_fbo(fbo_mixed);
+	
 	for(int i = 0; i < NUM_TYPES; i++){
 		fbo[i].allocate(WINDOW_WIDTH, WINDOW_HEIGHT, GL_RGBA);
 		clear_fbo(fbo[i]);
 	}
 	
+	/* */
 	load_and_set_mov();
 
 	shader_Add.load( "sj_shader/BlendAdd.vert", "sj_shader/BlendAdd.frag");
@@ -164,7 +169,7 @@ void ofApp::update(){
 
 /******************************
 ******************************/
-void ofApp::draw(){
+void ofApp::draw_mixed(){
 	/********************
 	********************/
 	ofEnableAlphaBlending();
@@ -175,17 +180,43 @@ void ofApp::draw(){
 	
 	/********************
 	********************/
+	fbo_mixed.begin();
+		ofBackground(0);
+		ofSetColor(255);
+		
+		shader_Add.begin();
+			shader_Add.setUniform1f( "a_Calm", Gui_Global->a_Calm );
+			shader_Add.setUniform1f( "a_Evil", Gui_Global->a_Evil );
+			
+			shader_Add.setUniformTexture( "Calm", fbo[TYPE_CALM].getTexture(), 1 );
+			
+			fbo[TYPE_EVIL].draw(0, 0, fbo[TYPE_EVIL].getWidth(), fbo[TYPE_EVIL].getHeight());
+		shader_Add.end();
+	fbo_mixed.end();	
+}
+
+/******************************
+******************************/
+void ofApp::draw(){
+	/********************
+	********************/
+	draw_mixed();
+	
+	/********************
+	********************/
+	/* */
+	ofEnableAlphaBlending();
+	ofEnableBlendMode(OF_BLENDMODE_ADD);
+	// ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+	
+	// ofDisableAlphaBlending();
+	
+	/* */
 	ofBackground(0);
 	ofSetColor(255);
 	
-	shader_Add.begin();
-		shader_Add.setUniform1f( "a_Calm", Gui_Global->a_Calm );
-		shader_Add.setUniform1f( "a_Evil", Gui_Global->a_Evil );
-		
-		shader_Add.setUniformTexture( "Calm", fbo[TYPE_CALM].getTexture(), 1 );
-		
-		fbo[TYPE_EVIL].draw(0, 0, fbo[TYPE_EVIL].getWidth(), fbo[TYPE_EVIL].getHeight());
-	shader_Add.end();
+	/* */
+	fbo_mixed.draw(0, 0, ofGetWidth(), ofGetHeight());
 	
 	/********************
 	********************/
